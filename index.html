@@ -178,5 +178,71 @@
     catch(err){console.error(err);alert("Could not save. Check your Firestore rules and admin permissions.");}
   });
 </script>
+<script>
+(async function () {
+  try {
+    const response = await fetch("/api/products");
+    if (!response.ok) return;
+
+    const products = await response.json();
+    if (!products.length) return;
+
+    const section = document.createElement("section");
+    section.style.cssText =
+      "max-width:1200px;margin:30px auto;padding:20px;";
+
+    const heading = document.createElement("h2");
+    heading.textContent = "Our Disposable Products";
+    section.appendChild(heading);
+
+    const grid = document.createElement("div");
+    grid.style.cssText =
+      "display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;";
+
+    products.forEach(function (product) {
+      const card = document.createElement("article");
+      card.style.cssText =
+        "border:1px solid #ddd;border-radius:10px;padding:15px;overflow-wrap:anywhere;";
+
+      if (product.image) {
+        const img = document.createElement("img");
+        img.src = product.image;
+        img.alt = product.name;
+        img.loading = "lazy";
+        img.style.cssText =
+          "width:100%;height:160px;object-fit:contain;";
+        card.appendChild(img);
+      }
+
+      const name = document.createElement("h3");
+      name.textContent = product.name;
+      card.appendChild(name);
+
+      const category = document.createElement("p");
+      category.textContent = product.category;
+      card.appendChild(category);
+
+      if (product.description) {
+        const description = document.createElement("p");
+        description.textContent = product.description;
+        card.appendChild(description);
+      }
+
+      if (product.price) {
+        const price = document.createElement("p");
+        price.textContent = "Price: " + product.price;
+        card.appendChild(price);
+      }
+
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    document.body.appendChild(section);
+  } catch (error) {
+    console.error("Product loading failed:", error);
+  }
+})();
+</script>
 </body>
 </html>
