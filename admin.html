@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Admin | Rashmi Trading Agency</title>
+  <title>Admin Panel | Rashmi Trading Agency</title>
 
   <style>
     * {
@@ -11,10 +11,10 @@
     }
 
     body {
+      margin: 0;
+      padding: 20px;
       font-family: Arial, sans-serif;
       background: #f3f5f7;
-      margin: 0;
-      padding: 16px;
       color: #222;
     }
 
@@ -23,16 +23,16 @@
       margin: auto;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px #00000012;
+    h1, h2 {
+      color: #17365d;
     }
 
-    h1, h2 {
-      margin-top: 0;
+    .box {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #00000012;
     }
 
     input, textarea, select, button {
@@ -40,20 +40,20 @@
       padding: 12px;
       margin: 7px 0;
       font-size: 16px;
-      border-radius: 7px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
-    input, textarea, select {
-      border: 1px solid #ccc;
-      background: white;
+    textarea {
+      min-height: 80px;
+      resize: vertical;
     }
 
     button {
+      background: #17365d;
+      color: white;
       border: none;
       cursor: pointer;
-      color: white;
-      background: #087443;
-      font-weight: bold;
     }
 
     button:disabled {
@@ -61,429 +61,419 @@
       cursor: wait;
     }
 
-    .secondary {
-      background: #555;
-    }
-
     .delete {
       background: #c62828;
     }
 
-    .edit {
-      background: #1769aa;
+    .secondary {
+      background: #555;
     }
 
     .product {
       border: 1px solid #ddd;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 14px;
       margin: 12px 0;
       overflow-wrap: anywhere;
     }
 
     .product img {
-      width: 100%;
+      display: block;
       max-width: 180px;
       max-height: 180px;
       object-fit: contain;
-      display: block;
-      margin: 8px 0;
+      margin-bottom: 10px;
     }
 
-    .actions {
-      display: flex;
-      gap: 10px;
+    .product button {
+      width: auto;
+      min-width: 100px;
+      margin-right: 6px;
     }
 
-    .actions button {
-      flex: 1;
+    .message {
+      overflow-wrap: anywhere;
+      font-weight: bold;
     }
 
-    #adminArea {
+    .hidden {
       display: none;
     }
 
-    #message {
-      font-weight: bold;
-      overflow-wrap: anywhere;
-    }
-
-    .hint {
-      color: #555;
-      font-size: 14px;
-      line-height: 1.5;
+    #status {
+      color: #333;
     }
   </style>
 </head>
 
 <body>
-<div class="container">
-
-  <div class="card">
+  <div class="container">
     <h1>Rashmi Trading Agency</h1>
-    <p>Product Admin Panel</p>
-  </div>
+    <p>Product Management Admin Panel</p>
 
-  <div class="card" id="loginArea">
-    <h2>Admin Login</h2>
+    <div id="loginBox" class="box">
+      <h2>Admin Login</h2>
 
-    <form id="loginForm">
-      <input
-        type="password"
-        id="password"
-        placeholder="Enter admin password"
-        autocomplete="current-password"
-        required
-      >
+      <form id="loginForm">
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          required
+        >
 
-      <button type="submit" id="loginButton">Login</button>
-    </form>
-
-    <p id="loginMessage" role="status"></p>
-  </div>
-
-  <div id="adminArea">
-
-    <div class="card">
-      <h2 id="formTitle">Add New Product</h2>
-
-      <form id="productForm">
-        <input type="hidden" id="productId">
-
-        <label for="name">Product name *</label>
-        <input id="name" placeholder="e.g. Paper Plates" required>
-
-        <label for="category">Category *</label>
-        <select id="category" required>
-          <option value="">Select category</option>
-          <option>Paper Plates</option>
-          <option>Paper Cups</option>
-          <option>Paper Bowls</option>
-          <option>Plastic Cups</option>
-          <option>Food Containers</option>
-          <option>Meal Trays</option>
-          <option>Bagasse Products</option>
-          <option>Spoons and Forks</option>
-          <option>Straws</option>
-          <option>Tissues</option>
-          <option>Aluminium Foil</option>
-          <option>Cling Film</option>
-          <option>Carry Bags</option>
-          <option>Other Disposable Items</option>
-        </select>
-
-        <label for="description">Description</label>
-        <textarea id="description" rows="3"
-          placeholder="Product details"></textarea>
-
-        <label for="price">Price</label>
-        <input id="price" placeholder="e.g. Contact for wholesale price">
-
-        <label for="image">Product image URL</label>
-        <input id="image" type="url"
-          placeholder="https://example.com/product.jpg">
-
-        <p class="hint">
-          Enter a direct image URL. This field does not upload photos
-          from your phone.
-        </p>
-
-        <button type="submit" id="saveButton">Add Product</button>
-        <button type="button" class="secondary"
-          id="cancelButton" hidden>Cancel Editing</button>
+        <button type="submit" id="loginButton">Login</button>
       </form>
 
-      <p id="message" role="status"></p>
+      <p id="loginMessage" class="message"></p>
     </div>
 
-    <div class="card">
-      <h2>Manage Products</h2>
-      <button type="button" id="refreshButton" class="secondary">
-        Refresh Product List
+    <div id="adminArea" class="hidden">
+      <div class="box">
+        <h2 id="formTitle">Add New Product</h2>
+
+        <form id="productForm">
+          <input type="hidden" id="productId">
+
+          <label for="name">Product Name *</label>
+          <input id="name" required placeholder="Enter product name">
+
+          <label for="category">Category *</label>
+          <input
+            id="category"
+            required
+            placeholder="Example: Paper Plates"
+          >
+
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            placeholder="Product details"
+          ></textarea>
+
+          <label for="price">Price</label>
+          <input id="price" placeholder="Example: ₹100 per packet">
+
+          <label for="image">Product Image URL</label>
+          <input
+            id="image"
+            type="url"
+            placeholder="Paste your image URL here"
+          >
+
+          <button type="submit" id="saveButton">Add Product</button>
+          <button
+            type="button"
+            id="cancelButton"
+            class="secondary hidden"
+          >
+            Cancel Edit
+          </button>
+        </form>
+
+        <p id="formMessage" class="message"></p>
+      </div>
+
+      <div class="box">
+        <h2>Products</h2>
+        <button type="button" id="refreshButton" class="secondary">
+          Refresh Products
+        </button>
+
+        <p id="status">Loading products...</p>
+        <div id="productList"></div>
+      </div>
+
+      <button type="button" id="logoutButton" class="delete">
+        Logout
       </button>
-      <div id="productList">Loading products...</div>
     </div>
-
-    <button type="button" id="logoutButton" class="secondary">
-      Log Out
-    </button>
-
   </div>
-</div>
 
-<script>
-  let adminPassword = "";
-
-  const loginArea = document.getElementById("loginArea");
-  const adminArea = document.getElementById("adminArea");
-  const loginForm = document.getElementById("loginForm");
-  const loginMessage = document.getElementById("loginMessage");
-  const productForm = document.getElementById("productForm");
-  const productList = document.getElementById("productList");
-  const message = document.getElementById("message");
-  const saveButton = document.getElementById("saveButton");
-  const cancelButton = document.getElementById("cancelButton");
-
-  function showMessage(text, isError = false) {
-    message.textContent = text;
-    message.style.color = isError ? "#c62828" : "#087443";
-  }
-
-  async function apiRequest(url, options = {}) {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...(options.headers || {}),
-        "X-Admin-Password": adminPassword
-      }
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      throw new Error(data.error || "Request failed.");
-    }
-
-    return data;
-  }
-
-  loginForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const password = document.getElementById("password").value;
+  <script>
+    const loginBox = document.getElementById("loginBox");
+    const adminArea = document.getElementById("adminArea");
+    const loginForm = document.getElementById("loginForm");
+    const productForm = document.getElementById("productForm");
+    const loginMessage = document.getElementById("loginMessage");
+    const formMessage = document.getElementById("formMessage");
+    const productList = document.getElementById("productList");
+    const statusMessage = document.getElementById("status");
+    const saveButton = document.getElementById("saveButton");
     const loginButton = document.getElementById("loginButton");
 
-    loginButton.disabled = true;
-    loginMessage.textContent = "Checking password...";
+    let products = [];
 
-    try {
-      const response = await fetch("/api/admin-login", {
-        method: "POST",
+    async function apiRequest(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        credentials: "same-origin",
         headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ password })
+          ...(options.headers || {})
+        }
       });
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Login failed.");
+      if (response.status === 401 || response.status === 403) {
+        showLogin("Your session may have expired. Please log in again.");
+        throw new Error("Please log in again.");
       }
 
-      adminPassword = password;
-      document.getElementById("password").value = "";
-      loginArea.style.display = "none";
-      adminArea.style.display = "block";
-      loginMessage.textContent = "";
-
-      await loadProducts();
-    } catch (error) {
-      loginMessage.textContent = error.message;
-    } finally {
-      loginButton.disabled = false;
-    }
-  });
-
-  async function loadProducts() {
-    productList.textContent = "Loading products...";
-
-    try {
-      const response = await fetch("/api/products");
       if (!response.ok) {
-        throw new Error("Could not load products.");
+        throw new Error(data.error || "Request failed.");
       }
 
-      const products = await response.json();
+      return data;
+    }
+
+    function showLogin(message = "") {
+      loginBox.classList.remove("hidden");
+      adminArea.classList.add("hidden");
+      loginMessage.textContent = message;
+      productList.replaceChildren();
+    }
+
+    async function showAdmin() {
+      loginBox.classList.add("hidden");
+      adminArea.classList.remove("hidden");
+      await loadProducts();
+    }
+
+    loginForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      loginButton.disabled = true;
+      loginMessage.textContent = "Checking password...";
+
+      try {
+        const password = document.getElementById("password").value;
+
+        const response = await fetch("/api/admin-session", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data.error || "Login failed.");
+        }
+
+        document.getElementById("password").value = "";
+        loginMessage.textContent = "";
+        await showAdmin();
+      } catch (error) {
+        loginMessage.textContent = error.message;
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    async function loadProducts() {
+      statusMessage.textContent = "Loading products...";
       productList.replaceChildren();
 
-      if (!products.length) {
-        productList.textContent = "No products added yet.";
+      try {
+        const data = await apiRequest("/api/products");
+
+        products = Array.isArray(data)
+          ? data
+          : Array.isArray(data.products)
+            ? data.products
+            : [];
+
+        statusMessage.textContent =
+          products.length + " product(s) found.";
+
+        if (products.length === 0) {
+          statusMessage.textContent = "No products found yet.";
+          return;
+        }
+
+        products.forEach(product => {
+          const card = document.createElement("div");
+          card.className = "product";
+
+          if (product.image) {
+            const img = document.createElement("img");
+            img.src = product.image;
+            img.alt = product.name || "Product";
+            img.loading = "lazy";
+
+            img.addEventListener("error", () => {
+              img.alt = "Image could not be loaded";
+            });
+
+            card.appendChild(img);
+          }
+
+          const title = document.createElement("h3");
+          title.textContent = product.name || "";
+          card.appendChild(title);
+
+          const category = document.createElement("p");
+          category.textContent = "Category: " + (product.category || "");
+          card.appendChild(category);
+
+          const description = document.createElement("p");
+          description.textContent = product.description || "";
+          card.appendChild(description);
+
+          const price = document.createElement("p");
+          price.textContent = "Price: " + (product.price || "Contact us");
+          card.appendChild(price);
+
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.textContent = "Edit";
+          editButton.addEventListener("click", () => editProduct(product));
+          card.appendChild(editButton);
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.textContent = "Delete";
+          deleteButton.className = "delete";
+          deleteButton.addEventListener("click", () => deleteProduct(product));
+          card.appendChild(deleteButton);
+
+          productList.appendChild(card);
+        });
+      } catch (error) {
+        statusMessage.textContent = error.message;
+      }
+    }
+
+    function editProduct(product) {
+      document.getElementById("productId").value = product.id;
+      document.getElementById("name").value = product.name || "";
+      document.getElementById("category").value = product.category || "";
+      document.getElementById("description").value = product.description || "";
+      document.getElementById("price").value = product.price || "";
+      document.getElementById("image").value = product.image || "";
+
+      document.getElementById("formTitle").textContent = "Edit Product";
+      saveButton.textContent = "Save Changes";
+      document.getElementById("cancelButton").classList.remove("hidden");
+
+      formMessage.textContent = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetForm() {
+      productForm.reset();
+      document.getElementById("productId").value = "";
+      document.getElementById("formTitle").textContent = "Add New Product";
+      saveButton.textContent = "Add Product";
+      document.getElementById("cancelButton").classList.add("hidden");
+      formMessage.textContent = "";
+    }
+
+    document.getElementById("cancelButton").addEventListener("click", resetForm);
+
+    productForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      saveButton.disabled = true;
+      formMessage.textContent = "Saving product...";
+
+      const id = document.getElementById("productId").value;
+
+      const product = {
+        name: document.getElementById("name").value.trim(),
+        category: document.getElementById("category").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        price: document.getElementById("price").value.trim(),
+        image: document.getElementById("image").value.trim()
+      };
+
+      try {
+        const data = await apiRequest(
+          id
+            ? "/api/products?id=" + encodeURIComponent(id)
+            : "/api/products",
+          {
+            method: id ? "PUT" : "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(id ? { ...product, id } : product)
+          }
+        );
+
+        formMessage.textContent = data.message || "Product saved successfully.";
+        resetForm();
+        await loadProducts();
+      } catch (error) {
+        formMessage.textContent = error.message;
+      } finally {
+        saveButton.disabled = false;
+      }
+    });
+
+    async function deleteProduct(product) {
+      if (!confirm('Delete "' + product.name + '"?')) {
         return;
       }
 
-      products.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "product";
+      try {
+        await apiRequest(
+          "/api/products?id=" + encodeURIComponent(product.id),
+          { method: "DELETE" }
+        );
 
-        const title = document.createElement("h3");
-        title.textContent = product.name;
-        card.appendChild(title);
-
-        const category = document.createElement("p");
-        category.textContent = "Category: " + product.category;
-        card.appendChild(category);
-
-        if (product.price) {
-          const price = document.createElement("p");
-          price.textContent = "Price: " + product.price;
-          card.appendChild(price);
-        }
-
-        if (product.description) {
-          const description = document.createElement("p");
-          description.textContent = product.description;
-          card.appendChild(description);
-        }
-
-        if (product.image) {
-          const img = document.createElement("img");
-          img.src = product.image;
-          img.alt = product.name;
-          img.loading = "lazy";
-          img.onerror = () => img.remove();
-          card.appendChild(img);
-        }
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.className = "edit";
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", () => editProduct(product));
-
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "delete";
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", () => deleteProduct(product));
-
-        actions.append(editButton, deleteButton);
-        card.appendChild(actions);
-        productList.appendChild(card);
-      });
-
-    } catch (error) {
-      productList.textContent = error.message;
-    }
-  }
-
-  function editProduct(product) {
-    document.getElementById("productId").value = product.id;
-    document.getElementById("name").value = product.name || "";
-    document.getElementById("category").value = product.category || "";
-
-    // Preserve a category if it isn't in the dropdown.
-    const categorySelect = document.getElementById("category");
-    if (product.category &&
-        !Array.from(categorySelect.options).some(
-          option => option.value === product.category
-        )) {
-      const option = document.createElement("option");
-      option.value = product.category;
-      option.textContent = product.category;
-      categorySelect.appendChild(option);
-      categorySelect.value = product.category;
+        statusMessage.textContent = "Product deleted.";
+        await loadProducts();
+      } catch (error) {
+        statusMessage.textContent = error.message;
+      }
     }
 
-    document.getElementById("description").value =
-      product.description || "";
-    document.getElementById("price").value = product.price || "";
-    document.getElementById("image").value = product.image || "";
-
-    document.getElementById("formTitle").textContent = "Edit Product";
-    saveButton.textContent = "Save Changes";
-    cancelButton.hidden = false;
-
-    document.getElementById("formTitle").scrollIntoView({
-      behavior: "smooth"
-    });
-  }
-
-  function resetForm() {
-    productForm.reset();
-    document.getElementById("productId").value = "";
-    document.getElementById("formTitle").textContent = "Add New Product";
-    saveButton.textContent = "Add Product";
-    cancelButton.hidden = true;
-    showMessage("");
-  }
-
-  cancelButton.addEventListener("click", resetForm);
-
-  productForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const id = document.getElementById("productId").value;
-
-    const product = {
-      name: document.getElementById("name").value.trim(),
-      category: document.getElementById("category").value,
-      description: document.getElementById("description").value.trim(),
-      price: document.getElementById("price").value.trim(),
-      image: document.getElementById("image").value.trim()
-    };
-
-    if (!product.name || !product.category) {
-      showMessage("Product name and category are required.", true);
-      return;
-    }
-
-    saveButton.disabled = true;
-
-    try {
-      await apiRequest("/api/products", {
-        method: id ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(id ? { ...product, id } : product)
-      });
-
-      resetForm();
-      showMessage(id ? "Product updated successfully!" :
-        "Product added successfully!");
-      await loadProducts();
-
-    } catch (error) {
-      showMessage(error.message, true);
-    } finally {
-      saveButton.disabled = false;
-    }
-  });
-
-  async function deleteProduct(product) {
-    const confirmed = confirm(
-      'Delete "' + product.name +
-      '" permanently? This cannot be undone.'
+    document.getElementById("refreshButton").addEventListener(
+      "click",
+      loadProducts
     );
 
-    if (!confirmed) return;
-
-    try {
-      await apiRequest(
-        "/api/products?id=" + encodeURIComponent(product.id),
-        { method: "DELETE" }
-      );
-
-      if (document.getElementById("productId").value ==
-          String(product.id)) {
-        resetForm();
+    document.getElementById("logoutButton").addEventListener(
+      "click",
+      async function() {
+        try {
+          await fetch("/api/admin-session", {
+            method: "DELETE",
+            credentials: "same-origin"
+          });
+        } finally {
+          resetForm();
+          showLogin("You have been logged out.");
+        }
       }
+    );
 
-      showMessage("Product deleted successfully.");
-      await loadProducts();
+    async function checkSession() {
+      try {
+        const response = await fetch("/api/admin-session", {
+          method: "GET",
+          credentials: "same-origin"
+        });
 
-    } catch (error) {
-      showMessage(error.message, true);
+        const data = await response.json();
+
+        if (response.ok && data.authenticated === true) {
+          await showAdmin();
+        } else {
+          showLogin();
+        }
+      } catch {
+        showLogin("Could not check your login. Please try again.");
+      }
     }
-  }
 
-  document.getElementById("refreshButton").addEventListener(
-    "click", loadProducts
-  );
-
-  document.getElementById("logoutButton").addEventListener(
-    "click", function() {
-      adminPassword = "";
-      resetForm();
-      adminArea.style.display = "none";
-      loginArea.style.display = "block";
-      loginMessage.textContent = "";
-    }
-  );
-</script>
+    checkSession();
+  </script>
 </body>
-  </html>
+</html>
