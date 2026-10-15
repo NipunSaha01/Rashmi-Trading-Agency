@@ -1,68 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rashmi Trading Agency - Admin</title>
-<style>
-body{font-family:Arial,sans-serif;max-width:650px;margin:25px auto;padding:15px;background:#f4f6f8}
-h1{color:#174b35}
-form{background:white;padding:18px;border-radius:12px}
-input,textarea,button{box-sizing:border-box;width:100%;padding:12px;margin:8px 0}
-button{background:#176b45;color:white;border:0;border-radius:6px}
-#status{white-space:pre-wrap}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rashmi Trading Agency - Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 16px;
+      background: #f4f6f8;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    input, textarea, select, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #17365d;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+    }
+    #message {
+      overflow-wrap: anywhere;
+    }
+  </style>
 </head>
 <body>
-<h1>Disposable Products Admin</h1>
-<p>This page is for managing the Rashmi Trading Agency catalogue.</p>
+  <h1>Rashmi Trading Agency</h1>
 
-<form id="productForm">
-<label>Product name</label>
-<input id="name" required placeholder="e.g. Paper plates">
+  <div class="box">
+    <section id="login">
+      <h2>Admin Login</h2>
+      <form id="loginForm">
+        <input
+          id="password"
+          type="password"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          required
+        >
+        <button type="submit">Login</button>
+      </form>
+      <p id="loginMessage" role="status"></p>
+    </section>
 
-<label>Category</label>
-<input id="category" required placeholder="e.g. Paper products">
+    <section id="manager" hidden>
+      <h2>Add a Disposable Product</h2>
+      <form id="productForm">
+        <input id="name" placeholder="Product name" required>
 
-<label>Description</label>
-<textarea id="description" placeholder="Product details"></textarea>
+        <select id="category" required>
+          <option value="">Choose category</option>
+          <option>Paper Plates</option>
+          <option>Paper Cups and Glasses</option>
+          <option>Plastic Cups and Glasses</option>
+          <option>Paper Bowls</option>
+          <option>Straws</option>
+          <option>Tissues and Napkins</option>
+          <option>Food Parcel Containers</option>
+          <option>Black Meal Trays</option>
+          <option>Bagasse Products</option>
+          <option>Aluminium Foil</option>
+          <option>Cling Film</option>
+          <option>Plastic Spoons and Forks</option>
+          <option>Wooden Spoons and Forks</option>
+          <option>Cloth Bags</option>
+          <option>Zip Bags</option>
+          <option>Silver Pouches</option>
+          <option>Rubber Bands</option>
+          <option>Other Disposable Items</option>
+        </select>
 
-<label>Price (optional)</label>
-<input id="price" placeholder="Leave blank if price varies">
+        <textarea id="description" placeholder="Description"></textarea>
+        <input id="price" placeholder="Price (optional)">
+        <input id="image" type="url" placeholder="Image URL (optional)">
+        <button type="submit">Add Product</button>
+      </form>
 
-<label>Product image URL (optional)</label>
-<input id="image" type="url" placeholder="https://...">
+      <p id="message" role="status"></p>
+      <button id="logout" type="button">Log Out</button>
+    </section>
+  </div>
 
-<button type="submit">Add product</button>
-</form>
+  <script>
+    let adminPassword = "";
 
-<p id="status"></p>
+    document.getElementById("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
 
-<script>
-document.getElementById("productForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  const status = document.getElementById("status");
-  status.textContent = "Saving product...";
-  try {
-    const response = await fetch("/api/products", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("loginMessage");
+      message.textContent = "Checking password...";
+
+      try {
+        const response = await fetch("/api/admin-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+
+        if (!response.ok) {
+          message.textContent = "Login failed. Check your password.";
+          return;
+        }
+
+        adminPassword = password;
+        document.getElementById("login").hidden = true;
+        document.getElementById("manager").hidden = false;
+        document.getElementById("password").value = "";
+      } catch {
+        message.textContent = "Connection error. Please try again.";
+      }
+    });
+
+    document.getElementById("productForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const message = document.getElementById("message");
+      message.textContent = "Adding product...";
+
+      const product = {
         name: document.getElementById("name").value.trim(),
-        category: document.getElementById("category").value.trim(),
+        category: document.getElementById("category").value,
         description: document.getElementById("description").value.trim(),
         price: document.getElementById("price").value.trim(),
         image: document.getElementById("image").value.trim()
-      })
+      };
+
+      try {
+        const response = await fetch("/api/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Password": adminPassword
+          },
+          body: JSON.stringify(product)
+        });
+
+        if (!response.ok) {
+          message.textContent = "Could not add product. Please log in again.";
+          return;
+        }
+
+        message.textContent = "Product added successfully!";
+        event.target.reset();
+      } catch {
+        message.textContent = "Connection error. Please try again.";
+      }
     });
-    const result = await response.json();
-    if (!response.ok || !result.success) throw new Error(result.error || "Could not save product");
-    status.textContent = "Product added successfully!";
-    this.reset();
-  } catch (error) {
-    status.textContent = "Unable to save: " + error.message;
-  }
-});
-</script>
+
+    document.getElementById("logout").addEventListener("click", () => {
+      adminPassword = "";
+      document.getElementById("manager").hidden = true;
+      document.getElementById("login").hidden = false;
+      document.getElementById("loginMessage").textContent = "Logged out.";
+    });
+  </script>
 </body>
 </html>
