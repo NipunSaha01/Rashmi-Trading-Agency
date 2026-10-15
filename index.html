@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -879,3 +879,177 @@ function renderProducts() {
         const matchesSearch = searchableText.includes(searchTerm);
 
         const matchesCategory =
+            activeCategory === "all" ||
+            category === activeCategory;
+
+        return matchesSearch && matchesCategory;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="status-message">
+                <strong>No products found.</strong><br>
+                Try another search or select a different category.
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(function(product) {
+        const name = escapeHTML(product.name || "Disposable Product");
+        const category = escapeHTML(getCategory(product));
+        const description = escapeHTML(
+            product.description || "Contact us for product details."
+        );
+
+        const image = getProductImage(product);
+        const imageHTML = image
+            ? `<img class="product-image"
+                    src="${escapeHTML(image)}"
+                    alt="${name}"
+                    loading="lazy"
+                    onerror="this.style.display='none'">`
+            : `<div class="product-image"
+                    style="display:grid;place-items:center;color:#718075">
+                    Product Image
+               </div>`;
+
+        return `
+            <article class="product-card">
+                ${imageHTML}
+
+                <div class="product-info">
+                    <span class="product-category">${category}</span>
+
+                    <h3>${name}</h3>
+
+                    <p class="product-description">${description}</p>
+
+                    <div class="product-price">
+                        ${formatPrice(product.price)}
+                    </div>
+
+                    <a class="product-button"
+                       href="${createWhatsAppLink(product)}"
+                       target="_blank"
+                       rel="noopener">
+                        Enquire on WhatsApp
+                    </a>
+                </div>
+            </article>
+        `;
+    }).join("");
+}
+
+async function loadProducts() {
+    grid.innerHTML = `
+        <div class="status-message">
+            Loading products...
+        </div>
+    `;
+
+    try {
+        const response = await fetch(API_URL, {
+            headers: {
+                "Accept": "application/json"
+            },
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error("Product API returned " + response.status);
+        }
+
+        const data = await response.json();
+
+        let items = Array.isArray(data)
+            ? data
+            : data.products || data.data || [];
+
+        if (!Array.isArray(items)) {
+            throw new Error("Unexpected product data format");
+        }
+
+        products = items.filter(function(product) {
+            return product &&
+                (product.name || product.product_name);
+        }).map(function(product) {
+            return {
+                ...product,
+                name: product.name || product.product_name,
+                category: product.category || product.product_category,
+                description:
+                    product.description || product.product_description,
+                image: product.image || product.image_url,
+                price: product.price ?? product.product_price
+            };
+        });
+
+        if (products.length === 0) {
+            grid.innerHTML = `
+                <div class="status-message">
+                    No products are available to display yet.
+                </div>
+            `;
+            return;
+        }
+
+        renderCategoryOptions();
+        renderProducts();
+
+    } catch (error) {
+        console.error("Unable to load products:", error);
+
+        grid.innerHTML = `
+            <div class="status-message">
+                <strong>Products could not be loaded.</strong><br>
+                Please refresh the page and try again.
+
+                <br>
+                <button class="retry-button" id="retryProducts">
+                    Try Again
+                </button>
+            </div>
+        `;
+
+        document.getElementById("retryProducts")
+            .addEventListener("click", loadProducts);
+    }
+}
+
+searchInput.addEventListener("input", renderProducts);
+
+categorySelect.addEventListener("change", function() {
+    activeCategory = categorySelect.value;
+
+    document.querySelectorAll(".category-btn").forEach(function(button) {
+        button.classList.toggle(
+            "active",
+            button.dataset.category === activeCategory
+        );
+    });
+
+    renderProducts();
+});
+
+categoryButtons.addEventListener("click", function(event) {
+    const button = event.target.closest(".category-btn");
+
+    if (!button) return;
+
+    activeCategory = button.dataset.category;
+
+    categorySelect.value = activeCategory;
+
+    document.querySelectorAll(".category-btn").forEach(function(item) {
+        item.classList.toggle("active", item === button);
+    });
+
+    renderProducts();
+});
+
+loadProducts();
+</script>
+
+</body>
+</html>
