@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rashmi Trading Agency - Admin</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:650px;margin:25px auto;padding:15px;background:#f4f6f8}
+h1{color:#174b35}
+form{background:white;padding:18px;border-radius:12px}
+input,textarea,button{box-sizing:border-box;width:100%;padding:12px;margin:8px 0}
+button{background:#176b45;color:white;border:0;border-radius:6px}
+#status{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>Disposable Products Admin</h1>
+<p>This page is for managing the Rashmi Trading Agency catalogue.</p>
+
+<form id="productForm">
+<label>Product name</label>
+<input id="name" required placeholder="e.g. Paper plates">
+
+<label>Category</label>
+<input id="category" required placeholder="e.g. Paper products">
+
+<label>Description</label>
+<textarea id="description" placeholder="Product details"></textarea>
+
+<label>Price (optional)</label>
+<input id="price" placeholder="Leave blank if price varies">
+
+<label>Product image URL (optional)</label>
+<input id="image" type="url" placeholder="https://...">
+
+<button type="submit">Add product</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+document.getElementById("productForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const status = document.getElementById("status");
+  status.textContent = "Saving product...";
+  try {
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        name: document.getElementById("name").value.trim(),
+        category: document.getElementById("category").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        price: document.getElementById("price").value.trim(),
+        image: document.getElementById("image").value.trim()
+      })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) throw new Error(result.error || "Could not save product");
+    status.textContent = "Product added successfully!";
+    this.reset();
+  } catch (error) {
+    status.textContent = "Unable to save: " + error.message;
+  }
+});
+</script>
+</body>
+</html>
